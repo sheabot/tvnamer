@@ -240,37 +240,29 @@ class Logger:
         logging.shutdown()
 
 
-def main():
+def main(default_config=None):
     """ Parses command line arguments, displays errors from tvnamer in terminal
     """
+
+    # Decode args using filesystem encoding
+    # Needed for unicode support (test_unicode.py)
+    # FIXME: better solution?
+    sys.argv = [x.decode(sys.getfilesystemencoding()) for x in sys.argv]
 
     logger = Logger()
     logger.initLogging()
 
-    opter = cliarg_parser.getCommandlineParser(Config)
-    opts, args = opter.parse_args()
+    # initialize argument list parser
+    parser = cliarg_parser.getCommandlineParser()
 
-    logger.initLogging(verbose_console=opts.verbose, filename=opts.log_file)
-    log().debug("tvnamer started")
+    # first parse only for config file
+    config_path = cliarg_parser.parseConfigFile(default=default_config)
 
-    # If a config is specified, load it, update the Config using the loaded
-    # values, then reparse the options with the updated Config.
-    default_configuration = os.path.expanduser("~/.tvnamer.json")
-
-    if opts.loadconfig is not None:
-        # Command line overrides loading ~/.tvnamer.json
-        configToLoad = opts.loadconfig
-    elif os.path.isfile(default_configuration):
-        # No --config arg, so load default config if it exists
-        configToLoad = default_configuration
-    else:
-        # No arg, nothing at default config location, don't load anything
-        configToLoad = None
-
-    if configToLoad is not None:
-        p("Loading config: %s" % (configToLoad))
+    # load the config
+    if config_path is not None and os.path.isfile(config_path):
+        p("Loading config from '%s'" % config_path)
         try:
-            loadedConfig = json.load(open(os.path.expanduser(configToLoad)))
+            loadedConfig = json.load(open(os.path.expanduser(config_path)))
             config_version = loadedConfig.get("__version__") or "0"
             if cmp(__version__, config_version):
                 msg = "Old config file detected, please see "
@@ -280,47 +272,14 @@ def main():
                 msg += " and merge updates.\nProgram version: %s\nConfig version: %s" % (__version__, config_version)
                 raise ConfigValueError(msg)
         except ValueError, e:
-            p("Error loading config: %s" % e)
-            opter.exit(1)
+            log().error("Error loading config: %s" % e)
+            parser.exit(1)
         except ConfigValueError, e:
-            log().error("Error in config: " + e.message)
-            opter.exit(1)
+            log().error("Error in config: %s" % e.message)
+            parser.exit(1)
         else:
-            # Config loaded, update optparser's Config and reparse
+            # Update global config object
             Config.update(loadedConfig)
-            opter = cliarg_parser.getCommandlineParser(Config)
-            opts, args = opter.parse_args()
-            # log file path may be specified in config
-            logger.initLogging(verbose_console=opts.verbose, filename=opts.log_file)
-
-    # Decode args using filesystem encoding (done after config loading
-    # as the args are reparsed when the config is loaded)
-    args = [x.decode(sys.getfilesystemencoding()) for x in args]
-
-    # dump config into file or stdout
-    if opts.saveconfig or opts.showconfig:
-        configToSave = dict(opts.__dict__)
-        del configToSave['saveconfig']
-        del configToSave['loadconfig']
-        del configToSave['showconfig']
-
-        # Save config argument
-        if opts.saveconfig:
-            p("Saving config: %s" % (opts.saveconfig))
-            json.dump(
-                configToSave,
-                open(os.path.expanduser(opts.saveconfig), "w+"),
-                sort_keys=True,
-                indent=4)
-
-        # Show config argument
-        elif opts.showconfig:
-            p(json.dumps(opts.__dict__, sort_keys=True, indent=2))
-
-        return
-
-    # Update global config object
-    Config.update(opts.__dict__)
 
     # TODO: write function to check all exclusive options
     try:
@@ -330,18 +289,47 @@ def main():
             raise ConfigValueError("Both 'lowercase_filename' and 'titlecase_filename' cannot be specified.")
     except ConfigValueError, e:
         log().error("Error in config: " + e.message)
-        opter.exit(1)
+        parser.exit(1)
 
-    if len(args) == 0:
-        opter.error("No filenames or directories supplied")
+    # set defaults, parse full argument list and update global config object
+    parser.set_defaults(**Config)
+    args = parser.parse_args()
+    Config.update(args.__dict__)
+
+    # re-init logging into file
+    logger.initLogging(verbose_console=args.verbose, filename=args.log_file)
+    log().debug("tvnamer started")
+
+    # dump config into file or stdout
+    if args.saveconfig or args.showconfig:
+        configToSave = dict(args.__dict__)
+        del configToSave['saveconfig']
+        del configToSave['loadconfig']
+        del configToSave['showconfig']
+
+        # Save config argument
+        if args.saveconfig:
+            p("Saving config: %s" % (args.saveconfig))
+            json.dump(
+                configToSave,
+                open(os.path.expanduser(args.saveconfig), "w+"),
+                sort_keys=True,
+                indent=4)
+
+        # Show config argument
+        elif args.showconfig:
+            p(json.dumps(configToSave, sort_keys=True, indent=4))
+
+        return
 
     try:
-        args.sort()
-        tvnamer(paths=args)
+        args.path.sort()
+        tvnamer(paths=args.path)
     except NoValidFilesFoundError:
-        opter.error("No valid files were supplied")
+        parser.error("No valid files were supplied")
     except UserAbort, errormsg:
-        opter.error(errormsg)
+        parser.error(errormsg)
 
 if __name__ == '__main__':
-    main()
+    # TODO: don't load default config in tests!!!
+    main(default_config=os.path.expanduser("~/.tvnamer.json"))

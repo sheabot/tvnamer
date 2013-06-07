@@ -9,7 +9,7 @@ from nose.plugins.attrib import attr
 
 @attr("functional")
 def test_simple_single_file():
-    """Files without series name should be skipped, unless --name=MySeries is specified
+    """Files without series name should be skipped, unless --series-name=MySeries is specified
     """
 
     out_data = run_tvnamer(
@@ -23,12 +23,12 @@ def test_simple_single_file():
 
 @attr("functional")
 def test_simple_single_file_with_forced_seriesnames():
-    """Specifying 's01e01.avi' should parse when --name=SeriesName arg is specified
+    """Specifying 's01e01.avi' should parse when --series-name=SeriesName arg is specified
     """
 
     out_data = run_tvnamer(
         with_files = ['S01E02 - Some File.avi'],
-        with_flags = ["--batch", '--name', 'Scrubs'])
+        with_flags = ["--batch", '--series-name', 'Scrubs'])
 
     expected_files = ['Scrubs - [01x02] - My Mentor.avi']
 
@@ -37,7 +37,7 @@ def test_simple_single_file_with_forced_seriesnames():
 
 @attr("functional")
 def test_name_arg_skips_replacements():
-    """Should not apply input_filename_replacements to --name=SeriesName arg value
+    """Should not apply input_filename_replacements to --series-name=SeriesName arg value
     """
 
     conf = r"""
@@ -64,7 +64,7 @@ def test_name_arg_skips_replacements():
 
 @attr("functional")
 def test_replacements_applied_before_force_name():
-    """input_filename_replacements apply to filename, before --name=SeriesName takes effect
+    """input_filename_replacements apply to filename, before --series-name=SeriesName takes effect
     """
 
     conf = r"""
