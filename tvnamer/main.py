@@ -228,6 +228,8 @@ class Logger:
         self.consoleHandler.setFormatter(self.consoleFormatter)
         self.rootLogger.addHandler(self.consoleHandler)
 
+        # FIXME: this way messages recorded before initLogging(filename=foo.log) was called are lost
+        #        find some way to hold messages until filename is specified?
         if filename:
             # create file handler with DEBUG log level
             self.fileHandler = logging.FileHandler(filename)
@@ -259,27 +261,30 @@ def main(default_config=None):
     config_path = cliarg_parser.parseConfigFile(default=default_config)
 
     # load the config
-    if config_path is not None and os.path.isfile(config_path):
-        p("Loading config from '%s'" % config_path)
-        try:
-            loadedConfig = json.load(open(os.path.expanduser(config_path)))
-            config_version = loadedConfig.get("__version__") or "0"
-            if cmp(__version__, config_version):
-                msg = "Old config file detected, please see "
-                msg += "https://github.com/dbr/tvnamer/blob/master/tvnamer/config_defaults.py"
-                msg += " and/or "
-                msg += "https://github.com/dbr/tvnamer/blob/master/Changelog"
-                msg += " and merge updates.\nProgram version: %s\nConfig version: %s" % (__version__, config_version)
-                raise ConfigValueError(msg)
-        except ValueError as e:
-            log().error("Error loading config: %s" % e)
-            parser.exit(1)
-        except ConfigValueError as e:
-            log().error("Error in config: %s" % e.message)
-            parser.exit(1)
+    if config_path is not None:
+        if os.path.isfile(config_path):
+            log().info("Loading config from '%s'" % config_path)
+            try:
+                loadedConfig = json.load(open(os.path.expanduser(config_path)))
+                config_version = loadedConfig.get("__version__") or "0"
+                if cmp(__version__, config_version):
+                    msg = "Old config file detected, please see "
+                    msg += "https://github.com/dbr/tvnamer/blob/master/tvnamer/config_defaults.py"
+                    msg += " and/or "
+                    msg += "https://github.com/dbr/tvnamer/blob/master/Changelog"
+                    msg += " and merge updates.\nProgram version: %s\nConfig version: %s" % (__version__, config_version)
+                    raise ConfigValueError(msg)
+            except ValueError as e:
+                log().error("Error loading config: %s" % e)
+                parser.exit(1)
+            except ConfigValueError as e:
+                log().error("Error in config: %s" % e.message)
+                parser.exit(1)
+            else:
+                # Update global config object
+                Config.update(loadedConfig)
         else:
-            # Update global config object
-            Config.update(loadedConfig)
+            log().warn("Config file '%s' does not exist, using defaults" % config_path)
 
     # TODO: write function to check all exclusive options
     try:
@@ -328,7 +333,7 @@ def main(default_config=None):
     except NoValidFilesFoundError:
         parser.error("No valid files were supplied")
     except UserAbort, errormsg:
-        parser.error(errormsg)
+        parser.exit(errormsg)
 
 if __name__ == '__main__':
     # TODO: don't load default config in tests!!!
