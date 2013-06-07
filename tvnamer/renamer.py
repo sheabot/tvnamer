@@ -95,7 +95,7 @@ class Renamer(object):
             p("Creating directory %s" % new_dir)
             try:
                 os.makedirs(new_dir)
-            except OSError, e:
+            except OSError as e:
                 if e.errno != 17:
                     raise
 

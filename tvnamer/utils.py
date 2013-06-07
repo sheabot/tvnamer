@@ -326,7 +326,7 @@ class FileParser(object):
                             "episodenumberstart and episodenumberend."
                             "Pattern was:\n" + cpattern)
 
-            except re.error, errormsg:
+            except re.error as errormsg:
                 log().warning("Invalid episode_pattern (error: %s)\nPattern:\n%s" % (errormsg, cpattern))
             else:
                 self.compiled_regexs.append(cregex)
@@ -529,12 +529,12 @@ class EpisodeInfo(object):
                 series_id = int(series_id)
                 tvdb_instance._getShowData(series_id, Config['language'])
                 show = tvdb_instance[series_id]
-        except tvdb_error, errormsg:
+        except tvdb_error as errormsg:
             raise DataRetrievalError("Error with www.thetvdb.com: %s" % errormsg)
         except tvdb_shownotfound:
             # No such series found.
             raise ShowNotFound("Show '%s' not found on www.thetvdb.com" % self.extra['seriesname'])
-        except tvdb_userabort, error:
+        except tvdb_userabort as error:
             raise UserAbort(unicode(error))
         else:
             # Series was found, use corrected series name

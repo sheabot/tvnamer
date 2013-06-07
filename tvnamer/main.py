@@ -54,7 +54,7 @@ def confirm(question, options, default="y"):
         p("(%s) " % (options_str), end="")
         try:
             ans = raw_input().strip()
-        except KeyboardInterrupt, errormsg:
+        except KeyboardInterrupt as errormsg:
             p("\n", errormsg)
             raise UserAbort(errormsg)
 
@@ -78,7 +78,7 @@ def processFile(tvdb_instance, episode):
 
     try:
         episode.populateFromTvdb(tvdb_instance, force_name=Config['force_name'], series_id=Config['series_id'])
-    except (DataRetrievalError, ShowNotFound, SeasonNotFound, EpisodeNotFound, EpisodeNameNotFound), errormsg:
+    except (DataRetrievalError, ShowNotFound, SeasonNotFound, EpisodeNotFound, EpisodeNameNotFound) as errormsg:
         log().warn(errormsg)
         if Config['batch'] and Config['exit_on_error']:
             sys.exit(1)
@@ -127,7 +127,7 @@ def processFile(tvdb_instance, episode):
             always_copy=Config['always_copy'],
             leave_symlink=Config['leave_symlink'],
             force=Config['overwrite_destination'])
-    except OSError, e:
+    except OSError as e:
         log().warn(e)
 
 
@@ -168,7 +168,7 @@ def tvnamer(paths):
         parser = FileParser(cfile)
         try:
             episode = parser.parse()
-        except InvalidFilename, e:
+        except InvalidFilename as e:
             log().warn("Invalid filename: %s" % e)
         else:
             if episode.seriesname is None and Config['force_name'] is None and Config['series_id'] is None:
@@ -271,10 +271,10 @@ def main(default_config=None):
                 msg += "https://github.com/dbr/tvnamer/blob/master/Changelog"
                 msg += " and merge updates.\nProgram version: %s\nConfig version: %s" % (__version__, config_version)
                 raise ConfigValueError(msg)
-        except ValueError, e:
+        except ValueError as e:
             log().error("Error loading config: %s" % e)
             parser.exit(1)
-        except ConfigValueError, e:
+        except ConfigValueError as e:
             log().error("Error in config: %s" % e.message)
             parser.exit(1)
         else:
@@ -287,7 +287,7 @@ def main(default_config=None):
             raise ConfigValueError("Both always_copy and always_move cannot be specified.")
         if Config['titlecase_dynamic_parts'] and Config['lowercase_dynamic_parts']:
             raise ConfigValueError("Both 'lowercase_filename' and 'titlecase_filename' cannot be specified.")
-    except ConfigValueError, e:
+    except ConfigValueError as e:
         log().error("Error in config: " + e.message)
         parser.exit(1)
 
