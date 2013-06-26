@@ -150,7 +150,7 @@ def run_tvnamer(with_files, with_flags = None, with_input = "", with_config = No
         files = dummy_files
 
     # Construct command
-    cmd = [sys.executable, tvnpath] + conf_args + with_flags + files
+    cmd = [sys.executable, tvnpath, "--test"] + conf_args + with_flags + files
     p("Running command:")
     p(" ".join(cmd))
 

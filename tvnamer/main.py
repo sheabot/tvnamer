@@ -330,5 +330,9 @@ def main(default_config=None):
         parser.exit(errormsg)
 
 if __name__ == '__main__':
-    # TODO: don't load default config in tests!!!
-    main(default_config=os.path.expanduser("~/.tvnamer.json"))
+    # don't load default config in tests!!!
+    if len(sys.argv) > 1 and sys.argv[1] == "--test":
+        del sys.argv[1]
+        main()
+    else:
+        main(default_config=os.path.expanduser("~/.tvnamer.json"))
