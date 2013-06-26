@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""Tests various configs load correctly
+""" Test various config options are loaded correctly
 """
 
 from functional_runner import run_tvnamer, verify_out_data

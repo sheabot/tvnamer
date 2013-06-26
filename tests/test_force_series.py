@@ -66,4 +66,3 @@ def test_temp_override():
     expected_files = ['Lost - [01x01] - Pilot (1).avi']
 
     verify_out_data(out_data, expected_files)
-

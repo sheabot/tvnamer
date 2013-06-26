@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
-"""Tests custom replacements on input/output files
+""" Tests custom replacements in series names
 """
 
 from functional_runner import run_tvnamer, verify_out_data
 from nose.plugins.attrib import attr
+
+# TODO: 'output_series_replacements' option is not tested, write some tests for it
 
 
 @attr("functional")

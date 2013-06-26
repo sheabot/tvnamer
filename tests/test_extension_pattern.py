@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""Tests multi-episode filename generation
+""" Test 'extension_pattern' option
 """
 
 from functional_runner import run_tvnamer, verify_out_data
@@ -9,7 +9,7 @@ from nose.plugins.attrib import attr
 
 @attr("functional")
 def test_extension_pattern_default():
-    """Test default extension handling, no language codes
+    """ Test default extension handling, no language codes
     """
 
     conf = r"""
@@ -40,7 +40,7 @@ def test_extension_pattern_default():
 
 @attr("functional")
 def test_extension_pattern_custom():
-    """Test custom extension pattern, multiple language codes
+    """ Test custom extension pattern, multiple language codes
     """
 
     conf = r"""

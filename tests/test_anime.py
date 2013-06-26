@@ -43,3 +43,23 @@ def test_group_no_epname():
     expected_files = ['[Some Group] Somefakeseries - 01 [A1B2C3].avi']
 
     verify_out_data(out_data, expected_files)
+
+
+@attr("functional")
+def test_ambiguity_fix():
+    """Test amiguous eisode number fix
+    """
+
+    conf = """
+    {"batch": true}
+    """
+
+    out_data = run_tvnamer(
+        with_files = ['[ANBU-AonE]_Naruto_43_[3811CBB5].avi'],
+        with_config = conf,
+        with_flags = [],
+        with_input = "")
+
+    expected_files = ['[ANBU-AonE] Naruto - 43 - Killer Kunoichi and a Shaky Shikamaru [3811CBB5].avi']
+
+    verify_out_data(out_data, expected_files)
