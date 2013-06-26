@@ -43,7 +43,7 @@ def test_name_arg_skips_replacements():
     conf = r"""
     {"batch": true,
 
-    "force_name": "Scrubs",
+    "series_name": "Scrubs",
 
     "input_filename_replacements": [
         {"is_regex": true,
@@ -63,14 +63,14 @@ def test_name_arg_skips_replacements():
 
 
 @attr("functional")
-def test_replacements_applied_before_force_name():
+def test_replacements_applied_before_series_name():
     """input_filename_replacements apply to filename, before --series-name=SeriesName takes effect
     """
 
     conf = r"""
     {"batch": true,
 
-    "force_name": "Scrubs",
+    "series_name": "Scrubs",
 
     "input_filename_replacements": [
         {"is_regex": true,

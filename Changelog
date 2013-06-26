@@ -12,3 +12,5 @@ is replaced with %(episode)s (as is used in 'filename_*' variables)
 * Removed 'move_files_only' config option (all files are moved actualy, not
 renamed). For preserving old behavior use %(originalfilename)s in
 'move_files_destination' and set 'move_files_destination_is_filepath' to True
+* 'force_name' option renamed to 'series_name' (both on command line and in
+config)

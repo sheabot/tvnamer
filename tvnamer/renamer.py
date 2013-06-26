@@ -31,12 +31,10 @@ def delete_file(fpath):
         from AppKit import NSURL
         from ScriptingBridge import SBApplication
     except ImportError:
-        p("Deleting %s" % fpath)
-        log().debug("Deleting %r" % fpath)
+        log().info("Deleting %s" % fpath)
         os.unlink(fpath)
     else:
-        p("Trashing %s" % fpath)
-        log().debug("Trashing %r" % fpath)
+        log().info("Trashing %s" % fpath)
         targetfile = NSURL.fileURLWithPath_(fpath)
         finder = SBApplication.applicationWithBundleIdentifier_("com.apple.Finder")
         items = finder.items().objectAtLocation_(targetfile)
@@ -47,8 +45,7 @@ def rename_file(old, new):
     """Rename 'old' file to 'new'. Both files must be on the same partition.
     Preserves access and modification time.
     """
-    p("Renaming %s to %s" % (old, new))
-    log().debug("Renaming %r to %r" % (old, new))
+    log().info("Renaming %s to %s" % (old, new))
     stat = os.stat(old)
     os.rename(old, new)
     os.utime(new, (stat.st_atime, stat.st_mtime))
@@ -57,8 +54,7 @@ def rename_file(old, new):
 def copy_file(old, new):
     """Copy 'old' file to 'new'.
     """
-    p("Copying %s to %s" % (old, new))
-    log().debug("Copying %r to %r" % (old, new))
+    log().info("Copying %s to %s" % (old, new))
     shutil.copyfile(old, new)
     shutil.copystat(old, new)
 
@@ -66,8 +62,7 @@ def copy_file(old, new):
 def symlink_file(target, name):
     """Create symbolic link named 'name' pointing to 'target'.
     """
-    p("Creating symlink %s to %s" % (name, target))
-    log().debug("Creating symlink %r to %r" % (name, target))
+    log().info("Creating symlink %s to %s" % (name, target))
     os.symlink(target, name)
 
 
@@ -92,7 +87,7 @@ class Renamer(object):
         new_dir = os.path.dirname(new_fullpath)
 
         if create_dirs:
-            p("Creating directory %s" % new_dir)
+            log().info("Creating directory %s" % new_dir)
             try:
                 os.makedirs(new_dir)
             except OSError as e:

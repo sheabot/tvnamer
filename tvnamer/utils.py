@@ -33,7 +33,7 @@ def split_extension(filename):
         specified in config under 'extension_pattern' key.
 
         By default the dot is included in the extension, so other functions
-        should use something like '
+        should use something like
             full = basename + extension
         or
             full = u"%s%s" % (basename, extension)
@@ -512,7 +512,7 @@ class EpisodeInfo(object):
         else:
             return Config['filename_with_episode'] if epname else Config['filename_without_episode']
 
-    def populateFromTvdb(self, tvdb_instance, force_name=None, series_id=None):
+    def populateFromTvdb(self, tvdb_instance, series_name=None, series_id=None):
         """ Queries the tvdb_api.Tvdb instance for episode name and corrected series name.
 
             If series cannot be found, it will warn the user. If the episode is not
@@ -524,7 +524,7 @@ class EpisodeInfo(object):
 
         try:
             if series_id is None:
-                show = tvdb_instance[force_name or self.extra['seriesname']]
+                show = tvdb_instance[series_name or self.extra['seriesname']]
             else:
                 series_id = int(series_id)
                 tvdb_instance._getShowData(series_id, Config['language'])
@@ -541,7 +541,6 @@ class EpisodeInfo(object):
             self.extra['seriesname'] = replaceOutputSeriesName(show['seriesname'])
 
         if self.eptype == 'dated':
-            # Date-based episode
             epnames = []
             for cepno in self.episodenumbers:
                 try:
@@ -561,10 +560,10 @@ class EpisodeInfo(object):
         for cepno in self.episodenumbers:
             try:
                 episodeinfo = show[seasonnumber][cepno]
-
+            except tvdb_attributenotfound:
+                raise EpisodeNameNotFound("Could not find episode name for '%s'" % cepno)
             except tvdb_seasonnotfound:
                 raise SeasonNotFound("Season %s of show '%s' could not be found" % (seasonnumber, self.extra['seriesname']))
-
             except tvdb_episodenotfound:
                 # Try to search by absolute_number
                 sr = show.search(cepno, "absolute_number")
@@ -582,11 +581,7 @@ class EpisodeInfo(object):
                     epnames.append(sr[0]['episodename'])
                 else:
                     raise EpisodeNotFound(
-                        "Episode %s of show '%s', season %s could not be found (also tried searching by absolute episode number)" % (
-                            cepno, self.extra['seriesname'], seasonnumber))
-
-            except tvdb_attributenotfound:
-                raise EpisodeNameNotFound("Could not find episode name for '%s'" % cepno)
+                        "Episode %s of show '%s', season %s could not be found (also tried searching by absolute episode number)" % (cepno, self.extra['seriesname'], seasonnumber))
             else:
                 epnames.append(episodeinfo['episodename'])
 

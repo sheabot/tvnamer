@@ -451,11 +451,11 @@ defaults = {
     # String to join multiple numbers in mapping key 'episode' (used in variables 'filename_with_episode' etc.)
     'episode_separator': '-',
 
-    # Series ID to use instead of searching if the value is set
+    # Forced series ID to use instead of searching in database (applies to all files)
     #'series_id': None,
 
-    # Forced Name to use
-    #'forced_name': None,
+    # Forced series name to use instead of searching in database (applies to all files)
+    #'series_name': None,
 
     # replace series names before/after passing to TVDB
     # input replacements are regular expressions for the series as parsed from

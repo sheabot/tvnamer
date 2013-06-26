@@ -41,19 +41,13 @@ def confirm(question, options, default="y"):
     """
 
     # Highlight default option with [ ]
-    options_str = []
-    for x in options:
-        if x == default:
-            x = "[%s]" % x
-        if x != '':
-            options_str.append(x)
+    options_str = [x if x != default else "[%s]" % x for x in options]
     options_str = "/".join(options_str)
+    prompt = "%s (%s) " % (question, options_str)
 
     while True:
-        p(question)
-        p("(%s) " % (options_str), end="")
         try:
-            ans = raw_input().strip()
+            ans = raw_input(prompt).strip()
         except KeyboardInterrupt as errormsg:
             p("\n", errormsg)
             raise UserAbort(errormsg)
@@ -77,7 +71,7 @@ def processFile(tvdb_instance, episode):
     p("")
 
     try:
-        episode.populateFromTvdb(tvdb_instance, force_name=Config['force_name'], series_id=Config['series_id'])
+        episode.populateFromTvdb(tvdb_instance, series_name=Config['series_name'], series_id=Config['series_id'])
     except (DataRetrievalError, ShowNotFound, SeasonNotFound, EpisodeNotFound, EpisodeNameNotFound) as errormsg:
         log().warn(errormsg)
         if Config['batch'] and Config['exit_on_error']:
@@ -171,8 +165,8 @@ def tvnamer(paths):
         except InvalidFilename as e:
             log().warn("Invalid filename: %s" % e)
         else:
-            if episode.seriesname is None and Config['force_name'] is None and Config['series_id'] is None:
-                log().warn("Parsed filename did not contain series name (and --name or --series-id not specified), skipping: %s" % cfile)
+            if episode.seriesname is None and Config['series_name'] is None and Config['series_id'] is None:
+                log().warn("Parsed filename did not contain series name (and --series-name or --series-id not specified), skipping: %s" % cfile)
             else:
                 episodes_found.append(episode)
 
