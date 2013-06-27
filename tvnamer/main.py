@@ -240,11 +240,6 @@ def main(default_config=None):
     """ Parses command line arguments, displays errors from tvnamer in terminal
     """
 
-    # Decode args using filesystem encoding
-    # Needed for unicode support (test_unicode.py)
-    # FIXME: better solution?
-    sys.argv = [x.decode(sys.getfilesystemencoding()) for x in sys.argv]
-
     logger = Logger()
     logger.initLogging()
 
@@ -256,29 +251,28 @@ def main(default_config=None):
 
     # load the config
     if config_path is not None:
-        if os.path.isfile(config_path):
-            log().info("Loading config from '%s'" % config_path)
-            try:
-                loadedConfig = json.load(open(os.path.expanduser(config_path)))
-                config_version = loadedConfig.get("__version__") or "0"
-                if cmp(__version__, config_version):
-                    msg = "Old config file detected, please see "
-                    msg += "https://github.com/dbr/tvnamer/blob/master/tvnamer/config_defaults.py"
-                    msg += " and/or "
-                    msg += "https://github.com/dbr/tvnamer/blob/master/Changelog"
-                    msg += " and merge updates.\nProgram version: %s\nConfig version: %s" % (__version__, config_version)
-                    raise ConfigValueError(msg)
-            except ValueError as e:
-                log().error("Error loading config: %s" % e)
-                parser.exit(1)
-            except ConfigValueError as e:
-                log().error("Error in config: %s" % e.message)
-                parser.exit(1)
-            else:
-                # Update global config object
-                Config.update(loadedConfig)
-        else:
+        log().info("Loading config file '%s'" % config_path)
+        try:
+            loadedConfig = json.load(open(os.path.expanduser(config_path)))
+            config_version = loadedConfig.get("__version__") or "0"
+            if cmp(__version__, config_version):
+                msg = "Old config file detected, please see "
+                msg += "https://github.com/dbr/tvnamer/blob/master/tvnamer/config_defaults.py"
+                msg += " and/or "
+                msg += "https://github.com/dbr/tvnamer/blob/master/Changelog"
+                msg += " and merge updates.\nProgram version: %s\nConfig version: %s" % (__version__, config_version)
+                raise ConfigValueError(msg)
+        except IOError:
             log().warn("Config file '%s' does not exist, using defaults" % config_path)
+        except ValueError as e:
+            log().error("Error loading config: %s" % e)
+            parser.exit(1)
+        except ConfigValueError as e:
+            log().error("Error in config: %s" % e.message)
+            parser.exit(1)
+        else:
+            # Update global config object
+            Config.update(loadedConfig)
 
     # TODO: write function to check all exclusive options
     try:
@@ -330,6 +324,11 @@ def main(default_config=None):
         parser.exit(errormsg)
 
 if __name__ == '__main__':
+    # Decode args using filesystem encoding
+    # Needed for unicode support (test_unicode.py)
+    # FIXME: better solution?
+    sys.argv = [x.decode(sys.getfilesystemencoding()) for x in sys.argv]
+
     # don't load default config in tests!!!
     if len(sys.argv) > 1 and sys.argv[1] == "--test":
         del sys.argv[1]

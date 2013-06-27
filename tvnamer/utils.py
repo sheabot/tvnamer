@@ -156,14 +156,14 @@ class FileFinder(object):
         one level into it and return a list of files, unless the recursive argument
         is True, in which case it finds all files contained within the path.
 
-        The with_extension argument is a list of valid extensions, without leading
-        spaces. If an empty list (or None) is supplied, no extension checking is
-        performed.
+        The with_extension argument is a list of valid extensions (without leading
+        dots, for example ["avi", "mp4"]). If an empty list (or None) is supplied,
+        no extension checking is performed.
 
         The filename_blacklist argument is a list of regexp strings to match against
-        the filename (minus the extension). If a match is found, the file is skipped
-        (e.g. for filtering out "sample" files). If [] or None is supplied, no
-        filtering is done
+        the filename (without the extension). If a match is found, the file is skipped
+        (e.g. for filtering out "sample" files). If an empty list (or None) is
+        supplied, no filtering is performed.
     """
 
     def __init__(self, path, with_extension=None, filename_blacklist=None, recursive=False):
@@ -193,7 +193,7 @@ class FileFinder(object):
             raise InvalidPath("%s is not a valid file/directory" % self.path)
 
     def _checkExtension(self, fname):
-        """ Checks if the file extension is blacklisted in valid_extensions
+        """ Returns True if the file extension is in valid_extensions (it is not blacklisted)
         """
 
         if len(self.with_extension) == 0:
@@ -257,7 +257,7 @@ class FileFinder(object):
             return False
 
     def _findFilesInPath(self, startpath):
-        """ Finds files from startpath, could be called recursively
+        """ Finds files from startpath, can be called recursively
         """
         allfiles = []
         if not os.access(startpath, os.R_OK):

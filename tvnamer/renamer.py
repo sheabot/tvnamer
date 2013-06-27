@@ -4,8 +4,6 @@ import os
 import shutil
 import logging
 
-from unicode_helper import p
-
 
 __all__ = ["Renamer"]
 
