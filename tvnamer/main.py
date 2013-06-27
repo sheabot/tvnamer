@@ -130,18 +130,16 @@ def findFiles(paths):
     """
 
     valid_files = []
+    finder = FileFinder(
+        with_extension=Config['valid_extensions'],
+        filename_blacklist=Config['filename_blacklist'],
+        recursive=Config['recursive'])
 
     for cfile in paths:
-        cur = FileFinder(
-            cfile,
-            with_extension=Config['valid_extensions'],
-            filename_blacklist=Config["filename_blacklist"],
-            recursive=Config['recursive'])
-
         try:
-            valid_files.extend(cur.findFiles())
+            valid_files.extend(finder.findFiles(cfile))
         except InvalidPath:
-            log().warn("Invalid path: %s" % cfile)
+            log().warn("Invalid path: '%s'" % cfile)
 
     if len(valid_files) == 0:
         raise NoValidFilesFoundError()
@@ -165,15 +163,15 @@ def tvnamer(paths):
         except InvalidFilename as e:
             log().warn("Invalid filename: %s" % e)
         else:
-            if episode.seriesname is None and Config['series_name'] is None and Config['series_id'] is None:
-                log().warn("Parsed filename did not contain series name (and --series-name or --series-id not specified), skipping: %s" % cfile)
-            else:
+            if episode.seriesname or Config['series_name'] or Config['series_id']:
                 episodes_found.append(episode)
+            else:
+                log().warn("Parsed filename did not contain series name (and --series-name or --series-id not specified), skipping: %s" % cfile)
 
     if len(episodes_found) == 0:
         raise NoValidFilesFoundError()
 
-    p("Found %d episode" % len(episodes_found) + ("s" * (len(episodes_found) > 1)))
+    p("Found episodes: %d" % len(episodes_found))
 
     # Sort episodes by series name, season and episode number
     episodes_found.sort(key=lambda x: x.sortable_info())
@@ -320,7 +318,7 @@ def main(default_config=None):
         tvnamer(paths=args.path)
     except NoValidFilesFoundError:
         parser.error("No valid files were supplied")
-    except UserAbort, errormsg:
+    except UserAbort as errormsg:
         parser.exit(errormsg)
 
 if __name__ == '__main__':

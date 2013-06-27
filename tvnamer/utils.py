@@ -166,8 +166,7 @@ class FileFinder(object):
         supplied, no filtering is performed.
     """
 
-    def __init__(self, path, with_extension=None, filename_blacklist=None, recursive=False):
-        self.path = path
+    def __init__(self, with_extension=None, filename_blacklist=None, recursive=False):
         if with_extension is None:
             self.with_extension = []
         else:
@@ -178,9 +177,10 @@ class FileFinder(object):
             self.with_blacklist = filename_blacklist
         self.recursive = recursive
 
-    def findFiles(self):
+    def findFiles(self, path):
         """ Returns list of files found at path
         """
+        self.path = path
         if os.path.isfile(self.path):
             path = os.path.abspath(self.path)
             if self._checkExtension(path) and not self._blacklistedFilename(path):
