@@ -32,9 +32,6 @@ def getCommandlineParser():
     g.add_argument("--series-name",   action="store",       help="override the parsed series name with this (applies to all files)")
     g.add_argument("--series-id",     action="store",       help="explicitly set the show id for TVdb to use (applies to all files)")
 
-    # TODO: this should probably be set only in config file
-    parser.add_argument("-d", "--movedestination", action="store", dest="move_files_destination", help="Destination to move files to. Variables: %%(seriesname)s %%(seasonnumber)d %%(episodenumbers)s")
-
     # Positional arguments - paths to files/directories
     parser.add_argument("path", action="store", nargs="+", help="paths to files/directories")
 

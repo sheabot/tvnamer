@@ -47,20 +47,6 @@ def test_dynamic_destination():
 
 
 @attr("functional")
-def test_cli_destination():
-    """Tests specifying the destination via command line argument
-    """
-
-    out_data = run_tvnamer(
-        with_files = ['scrubs.s01e01.avi'],
-        with_flags = ['--batch', '--movedestination=season %(seasonnumber)d/'])
-
-    expected_files = ['season 1/Scrubs - [01x01] - My First Day.avi']
-
-    verify_out_data(out_data, expected_files)
-
-
-@attr("functional")
 def test_move_interactive_allyes():
     """Tests interactive UI for moving all files
     """
