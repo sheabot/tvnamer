@@ -16,7 +16,7 @@ try:
 except ImportError:
     needed_pkgs.append('simplejson')
 
-needed_pkgs.append("tvdb_api>=1.5")
+needed_pkgs.append("tvdb_api>=3.0.0")
 
 
 from setuptools import setup
@@ -51,7 +51,6 @@ install_requires = needed_pkgs,
 classifiers=[
     "Environment :: Console",
     "Intended Audience :: End Users/Desktop",
-    # "License :: Unlicense",
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python",

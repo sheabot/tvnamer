@@ -253,7 +253,7 @@ def main(default_config=None):
         try:
             loadedConfig = json.load(open(os.path.expanduser(config_path)))
             config_version = loadedConfig.get("__version__") or "0"
-            if cmp(__version__, config_version):
+            if __version__ > config_version:
                 msg = "Old config file detected, please see "
                 msg += "https://github.com/dbr/tvnamer/blob/master/tvnamer/config_defaults.py"
                 msg += " and/or "
@@ -325,7 +325,8 @@ if __name__ == '__main__':
     # Decode args using filesystem encoding
     # Needed for unicode support (test_unicode.py)
     # FIXME: better solution?
-    sys.argv = [x.decode(sys.getfilesystemencoding()) for x in sys.argv]
+    if sys.version_info[0] < 3:
+        sys.argv = [x.decode(sys.getfilesystemencoding()) for x in sys.argv]
 
     # don't load default config in tests!!!
     if len(sys.argv) > 1 and sys.argv[1] == "--test":
