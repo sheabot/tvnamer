@@ -72,8 +72,8 @@ def test_autogen_names():
     for cdata in test_data:
         # Make new wrapped function
         def cur_test():
-            for seas in xrange(1, 11):
-                for ep in xrange(1, 11):
+            for seas in range(1, 11):
+                for ep in range(1, 11):
 
                     name_data = cdata['name_data']
 
@@ -117,7 +117,7 @@ def check_case(curtest):
 def test_parsing_generator():
     """Generates test for each test case in test_files.py
     """
-    for category, testcases in files.items():
+    for category, testcases in list(files.items()):
         for testindex, curtest in enumerate(testcases):
             cur_tester = lambda x: check_case(x)
             cur_tester.description = 'test_parsing_%s_%d: %r' % (

@@ -28,7 +28,6 @@ import tempfile
 import subprocess
 import atexit
 
-from tvnamer.unicode_helper import p, unicodify
 from tvnamer import __version__
 
 
@@ -77,7 +76,7 @@ def get_tvnamer_path():
         if os.path.isfile(tvnamer_location):
             return tvnamer_location
         else:
-            p(tvnamer_location)
+            print(tvnamer_location)
     else:
         raise IOError("tvnamer/main.py could not be found in . or ..")
 
@@ -105,7 +104,7 @@ def make_dummy_files(files, location):
         dirnames, _ = os.path.split(floc)
         try:
             os.makedirs(dirnames)
-        except OSError, e:
+        except OSError as e:
             if e.errno != 17:
                 raise
 
@@ -151,8 +150,8 @@ def run_tvnamer(with_files, with_flags = None, with_input = "", with_config = No
 
     # Construct command
     cmd = [sys.executable, tvnpath, "--test"] + conf_args + with_flags + files
-    p("Running command:")
-    p(" ".join(cmd))
+    print("Running command:")
+    print(" ".join(cmd))
 
 
     proc = subprocess.Popen(
@@ -161,12 +160,12 @@ def run_tvnamer(with_files, with_flags = None, with_input = "", with_config = No
         stderr = subprocess.STDOUT, # All stderr to stdout
         stdin = subprocess.PIPE)
 
-    proc.stdin.write(with_input)
+    proc.stdin.write(with_input.encode(encoding="utf-8"))
     output, _ = proc.communicate()
-    output = unicodify(output)
+    output = output.decode("utf-8")
 
     created_files = []
-    for walkroot, walkdirs, walkfiles in os.walk(unicode(episodes_location)):
+    for walkroot, walkdirs, walkfiles in os.walk(str(episodes_location)):
         curlist = [os.path.join(walkroot, name) for name in walkfiles]
 
         # Remove episodes_location from start of path
@@ -187,14 +186,14 @@ def verify_out_data(out_data, expected_files, expected_returncode = 0):
     If an assertion fails, nosetest will handily print the stdout/etc.
     """
 
-    p("Return code: %d" % out_data['returncode'])
+    print("Return code: %d" % out_data['returncode'])
 
-    p("Expected files:", expected_files)
-    p("Got files:     ", [x for x in out_data['files']])
+    print("Expected files:", expected_files)
+    print("Got files:     ", [x for x in out_data['files']])
 
-    p("\n" + "*" * 20 + "\n")
-    p("output:\n")
-    p(out_data['output'])
+    print("\n" + "*" * 20 + "\n")
+    print("output:\n")
+    print(out_data['output'])
 
     # Check number of files
     if len(expected_files) != len(out_data['files']):

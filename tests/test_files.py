@@ -276,29 +276,29 @@ files['multiple_episodes'] = [
 ]
 
 files['unicode'] = [
-    {'input': u'Carniv\xe0le 1x11 - The Day of the Dead',
-    'parsedseriesname': u'Carniv\xe0le',
-    'correctedseriesname': u'Carniv\xe0le',
+    {'input': 'Carniv\xe0le 1x11 - The Day of the Dead',
+    'parsedseriesname': 'Carniv\xe0le',
+    'correctedseriesname': 'Carniv\xe0le',
     'seasonnumber': 1, 'episodenumbers': [11],
     'episodenames': ['The Day of the Dead']},
 
-    {'input': u'T\xecnh Ng\u01b0\u1eddi Hi\u1ec7n \u0110\u1ea1i - [01x01]',
-    'parsedseriesname': u'T\xecnh Ng\u01b0\u1eddi Hi\u1ec7n \u0110\u1ea1i',
-    'correctedseriesname': u'Virtues Of Harmony II',
+    {'input': 'T\xecnh Ng\u01b0\u1eddi Hi\u1ec7n \u0110\u1ea1i - [01x01]',
+    'parsedseriesname': 'T\xecnh Ng\u01b0\u1eddi Hi\u1ec7n \u0110\u1ea1i',
+    'correctedseriesname': 'Virtues Of Harmony II',
     'seasonnumber': 1, 'episodenumbers': [1],
-    'episodenames': [u'T\xecnh Ng\u01b0\u1eddi Hi\u1ec7n \u0110\u1ea1i - Virtues Of Harmony II']},
+    'episodenames': ['T\xecnh Ng\u01b0\u1eddi Hi\u1ec7n \u0110\u1ea1i - Virtues Of Harmony II']},
 
-    {'input': u'The Big Bang Theory - S02E07 - The Panty Pi\xf1ata Polarization.avi',
-    'parsedseriesname': u'The Big Bang Theory',
-    'correctedseriesname': u'The Big Bang Theory',
+    {'input': 'The Big Bang Theory - S02E07 - The Panty Pi\xf1ata Polarization.avi',
+    'parsedseriesname': 'The Big Bang Theory',
+    'correctedseriesname': 'The Big Bang Theory',
     'seasonnumber': 2, 'episodenumbers': [7],
-    'episodenames': [u'The Panty Pi\xf1ata Polarization']},
+    'episodenames': ['The Panty Pi\xf1ata Polarization']},
 
-    {'input': u'NCIS - 1x16.avi',
-    'parsedseriesname': u'NCIS',
-    'correctedseriesname': u'NCIS',
+    {'input': 'NCIS - 1x16.avi',
+    'parsedseriesname': 'NCIS',
+    'correctedseriesname': 'NCIS',
     'seasonnumber': 1, 'episodenumbers': [16],
-    'episodenames': [u'B\xeate Noire']},
+    'episodenames': ['B\xeate Noire']},
 ]
 
 files['anime'] = [
@@ -442,8 +442,8 @@ def test_verify_test_data_sanity():
     """
     from helpers import assertEquals
 
-    for test_category, testcases in files.items():
-        keys = [ctest.keys() for ctest in testcases]
+    for test_category, testcases in list(files.items()):
+        keys = [list(ctest.keys()) for ctest in testcases]
         for k1 in keys:
             for k2 in keys:
                 assertEquals(sorted(k1), sorted(k2))
