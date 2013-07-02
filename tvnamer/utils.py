@@ -35,7 +35,7 @@ def split_extension(filename):
         should use something like
             full = basename + extension
         or
-            full = u"%s%s" % (basename, extension)
+            full = "%s%s" % (basename, extension)
         to get full filename again.
     """
     base = re.sub(Config["extension_pattern"], "", filename)
@@ -236,7 +236,7 @@ class FileFinder(object):
         fname, fext = split_extension(fullname)
 
         for fblacklist in self.with_blacklist:
-            if isinstance(fblacklist, basestring):
+            if isinstance(fblacklist, str):
                 if fullname == fblacklist:
                     return True
             else:
@@ -263,7 +263,7 @@ class FileFinder(object):
             log().info("Skipping inaccessible path %s" % startpath)
             return allfiles
 
-        for subf in os.listdir(unicode(startpath)):
+        for subf in os.listdir(startpath):
             newpath = os.path.join(startpath, subf)
             newpath = os.path.abspath(newpath)
             if os.path.isfile(newpath):
@@ -395,7 +395,7 @@ class FileParser(object):
             if start > end:
                 # Swap start and end
                 start, end = end, start
-            episodenumbers = range(start, end + 1)
+            episodenumbers = list(range(start, end + 1))
             if end - start > 5:
                 log().warning("WARNING: %s episodes detected in file: %s, confused by numeric episode name, using first match: %s" % (end - start, filename, start))
                 episodenumbers = [start]
@@ -474,7 +474,7 @@ class EpisodeInfo(object):
 
     @property
     def fullfilename(self):
-        return u"%s%s" % (self.filename, self.extension)
+        return "%s%s" % (self.filename, self.extension)
 
     def sortable_info(self):
         """ Returns a list of sortable information
@@ -534,7 +534,7 @@ class EpisodeInfo(object):
             # No such series found.
             raise ShowNotFound("Show '%s' not found on www.thetvdb.com" % self.extra['seriesname'])
         except tvdb_userabort as error:
-            raise UserAbort(unicode(error))
+            raise UserAbort(error)
         else:
             # Series was found, use corrected series name
             self.extra['seriesname'] = replaceOutputSeriesName(show['seriesname'])
@@ -662,4 +662,4 @@ class EpisodeInfo(object):
         return os.path.split(self.getNewFullPath())[1]
 
     def __repr__(self):
-        return u"<%s: %r>" % (self.__class__.__name__, self.fullfilename)
+        return "<%s: %r>" % (self.__class__.__name__, self.fullfilename)

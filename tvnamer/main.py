@@ -46,7 +46,7 @@ def confirm(question, options, default="y"):
 
     while True:
         try:
-            ans = raw_input(prompt).strip()
+            ans = input(prompt).strip()
         except KeyboardInterrupt as errormsg:
             print("\n", errormsg)
             raise UserAbort(errormsg)

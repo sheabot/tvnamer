@@ -90,7 +90,6 @@ def test_autogen_names():
                         # Only EpisodeInfo has seasonnumber
                         if p.eptype not in ['dated', 'noseason']:
                             assertEquals(int(p.seasonnumber), name_data['seasno'])
-        #end cur_test
 
         cur_test.description = cdata['description']
         yield cur_test

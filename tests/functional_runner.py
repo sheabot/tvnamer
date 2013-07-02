@@ -70,10 +70,12 @@ def get_tvnamer_path():
     """
     cur_location, _ = os.path.split(os.path.abspath(sys.path[0]))
     for cdir in [".", ".."]:
-        tvnamer_location = os.path.abspath(
-            os.path.join(cur_location, cdir, "tvnamer", "main.py"))
+        tvnamer_dir = os.path.abspath(os.path.join(cur_location, cdir, "tvnamer"))
+        tvnamer_location = os.path.join(tvnamer_dir, "main.py")
 
         if os.path.isfile(tvnamer_location):
+            # append tvnamer_dir to sys.path so that relative import in python3 works
+            sys.path.append(tvnamer_dir)
             return tvnamer_location
         else:
             print(tvnamer_location)
