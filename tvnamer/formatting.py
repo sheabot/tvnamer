@@ -6,7 +6,6 @@ import logging
 import platform
 import datetime
 
-from unicode_helper import p
 from config import Config
 
 

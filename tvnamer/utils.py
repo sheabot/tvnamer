@@ -19,7 +19,6 @@ from tvnamer_exceptions import (InvalidPath, InvalidFilename, ShowNotFound,
                                 BaseTvnamerException)
 
 from formatting import makeValidFilename, formatEpisodeNames, formatEpisodeNumbers
-from unicode_helper import p
 
 
 def log():
@@ -114,7 +113,7 @@ def replaceInputSeriesName(seriesname):
         or vice versa. This helps the TVDB query get the right match.
     """
 
-    for pat, replacement in Config['input_series_replacements'].iteritems():
+    for pat, replacement in Config['input_series_replacements'].items():
         if re.match(pat, seriesname, re.IGNORECASE | re.UNICODE):
             return replacement
     return seriesname
@@ -317,7 +316,7 @@ class FileParser(object):
                             "'episodenumberstart', 'episodenumberend'"
                             "Pattern was:\n" + cpattern)
 
-                    epnoset.update(set(['episodenumber'] + ['episodenumber%s' % x for x in xrange(1, 10)]))
+                    epnoset.update(set(['episodenumber'] + ['episodenumber%s' % x for x in range(1, 10)]))
                     intersection = groups.intersection(epnoset)
                     if len(intersection) == 0:
                         raise ConfigValueError(
@@ -627,9 +626,9 @@ class EpisodeInfo(object):
         newName = self.getFormatString() % epdata
 
         if len(Config['output_filename_replacements']) > 0:
-            p("Before custom output replacements: '%s'" % newName)
+            print("Before custom output replacements: '%s'" % newName)
             newName = applyCustomOutputReplacements(newName)
-            p("After custom output replacements:  '%s'" % newName)
+            print("After custom output replacements:  '%s'" % newName)
 
         if self.eptype == 'dated':
             newPath = Config['move_files_destination_date'] % epdata
@@ -651,7 +650,7 @@ class EpisodeInfo(object):
 
         # apply full-path replacements
         if len(Config['move_files_fullpath_replacements']) > 0:
-            p("Before custom full path replacements: '%s'" % (newFullPath))
+            print("Before custom full path replacements: '%s'" % (newFullPath))
             newFullPath = applyCustomFullpathReplacements(newFullPath)
 
         return newFullPath

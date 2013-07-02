@@ -18,7 +18,6 @@ from tvdb_api import Tvdb
 import cliarg_parser
 from config import Config
 
-from unicode_helper import p
 from utils import FileFinder, FileParser, applyCustomInputReplacements
 
 from tvnamer_exceptions import (ConfigValueError, ShowNotFound, SeasonNotFound, EpisodeNotFound,
@@ -49,7 +48,7 @@ def confirm(question, options, default="y"):
         try:
             ans = raw_input(prompt).strip()
         except KeyboardInterrupt as errormsg:
-            p("\n", errormsg)
+            print("\n", errormsg)
             raise UserAbort(errormsg)
 
         if ans in options:
@@ -62,13 +61,13 @@ def processFile(tvdb_instance, episode):
     """ Gets episode name, prompts user for input
     """
 
-    p("Processing file: '%s'" % episode.fullfilename)
+    print("Processing file: '%s'" % episode.fullfilename)
 
     if len(Config['input_filename_replacements']) > 0:
-        p("After input replacements: '%s'" % applyCustomInputReplacements(episode.fullfilename))
+        print("After input replacements: '%s'" % applyCustomInputReplacements(episode.fullfilename))
 
-    p("Detected series: %s (%s)" % (episode.seriesname, episode.number_string()))
-    p("")
+    print("Detected series: %s (%s)" % (episode.seriesname, episode.number_string()))
+    print("")
 
     try:
         episode.populateFromTvdb(tvdb_instance, series_name=Config['series_name'], series_id=Config['series_id'])
@@ -81,35 +80,35 @@ def processFile(tvdb_instance, episode):
             return
 
     newFullPath = episode.getNewFullPath()
-    p("")
+    print("")
 
-    p("Old directory: '%s'" % os.path.dirname(episode.fullpath))
-    p("New directory: '%s'" % os.path.dirname(newFullPath))
-    p("")
-    p("Old filename:  '%s'" % episode.fullfilename)
-    p("New filename:  '%s'" % os.path.split(newFullPath)[1])
-    p("")
+    print("Old directory: '%s'" % os.path.dirname(episode.fullpath))
+    print("New directory: '%s'" % os.path.dirname(newFullPath))
+    print("")
+    print("Old filename:  '%s'" % episode.fullfilename)
+    print("New filename:  '%s'" % os.path.split(newFullPath)[1])
+    print("")
 
     # don't do anything if filename was not changed
     if newFullPath == episode.fullpath:
-        p("Existing filename is correct: '%s'" % episode.fullpath)
+        print("Existing filename is correct: '%s'" % episode.fullpath)
         return
 
     if not Config['batch'] and Config['move_files_confirmation']:
         ans = confirm("Move file?", options=['y', 'n', 'a', 'q'], default='y')
         if ans == "a":
-            p("Always moving files")
+            print("Always moving files")
             Config['move_files_confirmation'] = False
         elif ans == "q":
-            p("Quitting")
+            print("Quitting")
             raise UserAbort("User exited with q")
         elif ans == "y":
-            p("Renaming")
+            print("Renaming")
         elif ans == "n":
-            p("Skipping")
+            print("Skipping")
             return
         else:
-            p("Invalid input, skipping")
+            print("Invalid input, skipping")
             return
 
     # finally move file
@@ -171,7 +170,7 @@ def tvnamer(paths):
     if len(episodes_found) == 0:
         raise NoValidFilesFoundError()
 
-    p("Found episodes: %d" % len(episodes_found))
+    print("Found episodes: %d" % len(episodes_found))
 
     # Sort episodes by series name, season and episode number
     episodes_found.sort(key=lambda x: x.sortable_info())
@@ -182,10 +181,10 @@ def tvnamer(paths):
         language=Config['language'])
 
     for episode in episodes_found:
-        p("")
-        p("#" * 20)
+        print("")
+        print("#" * 20)
         processFile(tvdb_instance, episode)
-        p("#" * 20)
+        print("#" * 20)
 
 
 class Logger:
@@ -300,7 +299,7 @@ def main(default_config=None):
 
         # Save config argument
         if args.saveconfig:
-            p("Saving config: %s" % (args.saveconfig))
+            print("Saving config: %s" % (args.saveconfig))
             json.dump(
                 configToSave,
                 open(os.path.expanduser(args.saveconfig), "w+"),
@@ -309,7 +308,7 @@ def main(default_config=None):
 
         # Show config argument
         elif args.showconfig:
-            p(json.dumps(configToSave, sort_keys=True, indent=4))
+            print(json.dumps(configToSave, sort_keys=True, indent=4))
 
         return
 
