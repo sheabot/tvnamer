@@ -4,7 +4,7 @@
 """
 
 import sys
-from tvnamer.compat import PY2, string_type
+from compat import PY2, string_type
 
 
 def p(*args, **kw):

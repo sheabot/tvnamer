@@ -5,10 +5,10 @@
 
 defaults = {
     # Select first series search result
-    'select_first': False,
+    'select_first': True,
 
     # Always rename files
-    'always_rename': False,
+    'always_rename': True,
 
     # Batch (same as select_first and always_rename)
     'batch': False,
@@ -16,10 +16,6 @@ defaults = {
     # Fail if error finding show data (thetvdb.com is down etc)
     # Only functions when always_rename is True
     'skip_file_on_error': True,
-    
-    # Fail if error finding show data (thetvdb.com is down etc)
-    # Changes the default behaviour for skip_file_on_error from skip to exit
-    'skip_behaviour': 'skip',
 
     # Forcefully overwrite existing files when renaming or
     # moving. This potentially destroys the old file. Default is False
@@ -28,9 +24,6 @@ defaults = {
 
     # Verbose mode (debugging info)
     'verbose': False,
-
-    # Dry-run mode (do nothing)
-    'dry_run': False,
 
     # Recurse more than one level into folders. When False, only
     # desends one level.
@@ -90,7 +83,7 @@ defaults = {
     'language': 'en',
 
     # Search in all possible languages
-    'search_all_languages': True,
+    'search_all_languages': False,
 
     # Move renamed files to directory?
     'move_files_enable': False,
@@ -443,10 +436,10 @@ defaults = {
     'episode_separator': '-',
 
     # Series ID to use instead of searching if the value is set
-    #'series_id': None,
+    'series_id': None,
 
     # Forced Name to use
-    #'forced_name': None,
+    'force_name': None,
 
     # replace series names before/after passing to TVDB
     # input replacements are regular expressions for the series as parsed from
